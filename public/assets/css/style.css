@@ -1,0 +1,524 @@
+/* Variables CSS personalizadas */
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+}
+
+/* Estilos generales */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex-grow: 1;
+}
+
+/* Hero section */
+.hero-section {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    border-radius: 15px !important;
+}
+
+/* Cards de imágenes */
+.image-card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+.image-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.card-img-top-wrapper {
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Botones de interacción */
+.like-btn {
+    transition: all 0.3s ease;
+}
+
+.like-btn:not(.btn-danger):hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+.comment-toggle-btn {
+    transition: all 0.3s ease;
+}
+
+/* Editor de fotos */
+.webcam-container {
+    position: relative;
+    background: #000;
+    border-radius: 10px;
+    overflow: hidden;
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+.preview-overlay {
+    pointer-events: none;
+    z-index: 10;
+}
+
+#interactive-canvas {
+    z-index: 20;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#interactive-canvas.active {
+    opacity: 1;
+}
+
+/* Stickers interactivos */
+.positioned-sticker {
+    position: absolute;
+    cursor: move;
+    user-select: none;
+    z-index: 15;
+    transition: transform 0.2s ease;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    pointer-events: auto;
+}
+
+.positioned-sticker:hover {
+    transform: scale(1.05);
+    border-color: #007bff;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+}
+
+.positioned-sticker.dragging {
+    z-index: 25;
+    transform: scale(1.1);
+    border-color: #ffc107;
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.7);
+}
+
+/* Preview del sticker que se va a colocar */
+.sticker-preview {
+    position: absolute;
+    pointer-events: none;
+    z-index: 30;
+    opacity: 0.8;
+    border: 2px dashed #007bff;
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+.webcam-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.sticker {
+    position: absolute;
+    cursor: move;
+    user-select: none;
+    pointer-events: auto;
+    transition: transform 0.2s ease;
+}
+
+.sticker:hover {
+    transform: scale(1.05);
+}
+
+.sticker.selected {
+    border: 2px solid #007bff;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+}
+
+.stickers-panel {
+    max-height: 200px;
+    overflow-y: auto;
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.sticker-option {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background: white;
+    padding: 5px;
+}
+
+.sticker-option:hover {
+    border-color: #007bff;
+    transform: scale(1.05);
+}
+
+.sticker-option.selected {
+    border-color: #007bff;
+    background-color: #e3f2fd;
+}
+
+.capture-btn {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    border: none;
+    border-radius: 50px;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.capture-btn:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+}
+
+.capture-btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
+/* Galería de usuario */
+.user-images-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.user-image-card {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.user-image-card:hover {
+    transform: scale(1.02);
+}
+
+.user-image-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.user-image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.user-image-card:hover .user-image-overlay {
+    opacity: 1;
+}
+
+/* Formularios */
+.form-card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    border: none;
+    border-radius: 25px;
+    padding: 10px 25px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+/* Alertas personalizadas */
+.alert {
+    border: none;
+    border-radius: 10px;
+    padding: 15px 20px;
+}
+
+.alert-success {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+}
+
+.alert-danger {
+    background: linear-gradient(45deg, #dc3545, #e74c3c);
+    color: white;
+}
+
+.alert-info {
+    background: linear-gradient(45deg, #17a2b8, #3498db);
+    color: white;
+}
+
+/* Loading states */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Comentarios */
+.comments-section {
+    border-top: 1px solid #dee2e6;
+    padding-top: 15px;
+    margin-top: 15px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+/* Asegurar que cada card sea independiente */
+.image-card {
+    position: relative;
+    z-index: 1;
+    height: auto !important; /* Forzar altura automática en lugar de h-100 */
+    align-self: flex-start; /* No estirar para igualar altura de otras cards */
+}
+
+.image-card .comments-section {
+    position: relative;
+    z-index: 2;
+}
+
+/* Forzar que las columnas no tengan la misma altura */
+#images-grid .col-lg-6 {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    align-self: flex-start; /* Evitar que se estiren para igualar altura */
+}
+
+#images-grid .col-lg-6 .image-card {
+    flex-grow: 0;
+    flex-shrink: 0;
+    height: auto;
+    min-height: auto;
+}
+
+/* Transición suave para la apertura de comentarios */
+.comments-section {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, padding 0.3s ease-out, margin 0.3s ease-out;
+}
+
+.comments-section[style*="block"] {
+    max-height: 500px; /* Altura máxima generosa */
+    padding-top: 15px;
+    margin-top: 15px;
+}
+
+.comment-item {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+}
+
+.comment-author {
+    font-weight: 600;
+    color: #007bff;
+    font-size: 0.9rem;
+}
+
+.comment-text {
+    margin: 5px 0;
+    font-size: 0.95rem;
+}
+
+.comment-date {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.comment-delete {
+    background: none;
+    border: none;
+    color: #dc3545;
+    font-size: 0.8rem;
+    padding: 0;
+    margin-left: 10px;
+}
+
+/* Botón de comentarios activo */
+.comment-toggle-btn.active {
+    background-color: #007bff !important;
+    border-color: #007bff !important;
+    color: white !important;
+}
+
+/* Grid de imágenes del usuario - Reorganización mejorada */
+#user-images-grid {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.user-image-col {
+    flex: 0 0 auto;
+    transition: all 0.3s ease;
+}
+
+/* Responsive para mantener el grid organizado */
+@media (min-width: 1200px) {
+    .user-image-col {
+        flex-basis: 25%;
+        max-width: 25%;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+    .user-image-col {
+        flex-basis: 33.333333%;
+        max-width: 33.333333%;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .user-image-col {
+        flex-basis: 50%;
+        max-width: 50%;
+    }
+}
+
+@media (max-width: 767px) {
+    .user-image-col {
+        flex-basis: 100%;
+        max-width: 100%;
+    }
+}
+
+/* Cards de imágenes del usuario sin altura fija */
+.user-image-card {
+    height: auto;
+    min-height: auto;
+    width: 100%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.user-image-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.comment-delete:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .webcam-container {
+        max-width: 100%;
+    }
+    
+    .stickers-panel {
+        max-height: 150px;
+    }
+    
+    .sticker-option {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .user-images-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+    }
+    
+    .hero-section {
+        margin-left: -15px;
+        margin-right: -15px;
+        border-radius: 0 !important;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .image-card {
+        background-color: #2d3748;
+        color: #e2e8f0;
+    }
+    
+    .card-img-top-wrapper {
+        background: #4a5568;
+        border-color: #4a5568;
+    }
+    
+    .comment-item {
+        background: #4a5568;
+        color: #e2e8f0;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+.slide-in {
+    animation: slideIn 0.5s ease-out;
+}
+
+/* Utilidades */
+.text-gradient {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.shadow-custom {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.border-gradient {
+    border: 2px solid;
+    border-image: linear-gradient(45deg, #007bff, #0056b3) 1;
+}

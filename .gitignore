@@ -1,0 +1,38 @@
+# Variables de entorno
+.env
+
+# Logs
+*.log
+logs/
+error.log
+
+# Uploads (opcional - depende de si quieres trackear las imágenes)
+public/uploads/*.jpg
+public/uploads/*.jpeg
+public/uploads/*.png
+public/uploads/*.gif
+
+# Vendor dependencies
+vendor/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+
+# Docker volumes data
+db_data/
+
+# Environment específicos
+.env.local
+.env.production
+.env.staging
