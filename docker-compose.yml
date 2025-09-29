@@ -17,6 +17,7 @@ services:
       - camagru_network
     environment:
       - APACHE_DOCUMENT_ROOT=/var/www/html/public
+      - TZ=Europe/Madrid
 
   db:
     image: mysql:8.0
@@ -27,6 +28,8 @@ services:
       MYSQL_DATABASE: camagru
       MYSQL_USER: camagru_user
       MYSQL_PASSWORD: camagru_pass
+      TZ: Europe/Madrid
+    command: --default-time-zone=+02:00
     ports:
       - "3306:3306"
     volumes:

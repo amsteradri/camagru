@@ -26,7 +26,9 @@ class Router {
 
             // Method
             if (isset($url[1]) && !empty($url[1])) {
-                $this->currentMethod = strtolower($url[1]);
+                // Convertir guiones a camelCase
+                $method = str_replace('-', '_', strtolower($url[1]));
+                $this->currentMethod = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $method))));
                 unset($url[1]);
             }
 

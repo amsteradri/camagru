@@ -365,6 +365,32 @@ main {
     margin-top: 15px;
 }
 
+/* Lista de comentarios con scroll */
+.comments-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+/* Scrollbar personalizada para comentarios */
+.comments-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.comments-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.comments-list::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.comments-list::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+}
+
 .comment-item {
     background: #f8f9fa;
     border-radius: 10px;

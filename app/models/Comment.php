@@ -36,7 +36,7 @@ class Comment extends Model {
                 FROM comments c 
                 JOIN users u ON c.user_id = u.id 
                 WHERE c.image_id = ? 
-                ORDER BY c.created_at ASC";
+                ORDER BY c.created_at DESC";
         return $this->db->fetchAll($sql, [$imageId]);
     }
 
