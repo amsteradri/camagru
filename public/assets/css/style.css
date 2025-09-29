@@ -178,6 +178,25 @@ main {
     background-color: #e3f2fd;
 }
 
+/* Selector de tamaño de stickers */
+#sticker-size {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background: #fff;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#sticker-size:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-label.small {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 5px;
+}
+
 .capture-btn {
     background: linear-gradient(45deg, #007bff, #0056b3);
     border: none;

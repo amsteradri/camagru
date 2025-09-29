@@ -49,6 +49,7 @@ class CamagruEditor {
     init() {
         this.initWebcam();
         this.initStickers();
+        this.initStickerSizeSelector();
         this.initEventListeners();
         this.initInteractiveCanvas();
     }
@@ -128,10 +129,11 @@ class CamagruEditor {
                 
                 // Seleccionar nuevo sticker
                 option.classList.add('selected');
+                const size = this.getStickerSize();
                 this.selectedSticker = {
                     filename: option.dataset.sticker,
-                    width: 50,
-                    height: 50
+                    width: size,
+                    height: size
                 };
                 
                 this.animateSelection(option);
@@ -146,6 +148,26 @@ class CamagruEditor {
         setTimeout(() => {
             option.style.transform = 'scale(1)';
         }, 150);
+    }
+
+    initStickerSizeSelector() {
+        const sizeSelector = document.getElementById('sticker-size');
+        if (sizeSelector) {
+            sizeSelector.addEventListener('change', () => {
+                // Si hay un sticker seleccionado, actualizar su tamaño
+                if (this.selectedSticker) {
+                    const size = this.getStickerSize();
+                    this.selectedSticker.width = size;
+                    this.selectedSticker.height = size;
+                    console.log('Tamaño de sticker actualizado a:', size);
+                }
+            });
+        }
+    }
+
+    getStickerSize() {
+        const sizeSelector = document.getElementById('sticker-size');
+        return sizeSelector ? parseInt(sizeSelector.value) : 120;
     }
 
     showInstructions() {

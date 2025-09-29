@@ -71,6 +71,19 @@
                     <small class="text-muted">(selecciona uno)</small>
                 </h5>
                 
+                <!-- Controles de tamaño de stickers -->
+                <div class="mb-3">
+                    <label class="form-label small">
+                        <i class="bi bi-arrows-angle-expand me-1"></i>Tamaño del sticker
+                    </label>
+                    <select id="sticker-size" class="form-select form-select-sm">
+                        <option value="80">Pequeño (80px)</option>
+                        <option value="120" selected>Mediano (120px)</option>
+                        <option value="160">Grande (160px)</option>
+                        <option value="200">Extra Grande (200px)</option>
+                    </select>
+                </div>
+                
                 <div class="stickers-panel">
                     <?php if (!empty($stickers)): ?>
                         <div class="d-flex flex-wrap gap-2">
