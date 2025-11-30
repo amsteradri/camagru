@@ -72,8 +72,16 @@ class CamagruApp {
     }
 
     initEditorFeatures() {
-        if (document.getElementById('webcam-canvas')) {
+        // Solo inicializar funcionalidad básica de webcam si no existe el editor avanzado
+        // Detectamos el editor avanzado por la presencia del canvas interactivo
+        const hasAdvancedEditor = document.getElementById('interactive-canvas');
+        const hasWebcamCanvas = document.getElementById('webcam-canvas');
+        
+        if (hasWebcamCanvas && !hasAdvancedEditor) {
+            console.log('Inicializando editor básico desde app.js');
             this.initWebcam();
+        } else if (hasAdvancedEditor) {
+            console.log('Editor avanzado detectado, app.js no inicializará webcam');
         }
     }
 
@@ -344,13 +352,27 @@ class CamagruApp {
 
     // Funciones de webcam (para el editor)
     initWebcam() {
+        // SIEMPRE abortar si estamos en la página del editor avanzado
+        if (window.location.pathname.includes('/editor') && document.getElementById('interactive-canvas')) {
+            console.log('⛔ app.js: Detectada página de editor avanzado, abortando initWebcam');
+            return;
+        }
+
         const video = document.getElementById('webcam-video');
         const canvas = document.getElementById('webcam-canvas');
         const captureBtn = document.getElementById('capture-btn');
         const stickerOptions = document.querySelectorAll('.sticker-option');
         
+        // Verificar si el botón ya está controlado por el editor avanzado
+        if (captureBtn && captureBtn.dataset.controlledByAdvancedEditor) {
+            console.log('Botón de captura ya controlado por editor avanzado, app.js no agregará listeners');
+            return;
+        }
+        
         let selectedSticker = null;
         let stream = null;
+        
+        console.log('app.js inicializando webcam básica');
         
         // Solicitar acceso a la webcam
         navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } })
@@ -362,7 +384,8 @@ class CamagruApp {
             .catch(err => {
                 console.error('Error accessing webcam:', err);
                 this.showAlert('error', 'No se pudo acceder a la webcam. Puedes subir una imagen en su lugar.');
-                document.getElementById('upload-section').style.display = 'block';
+                const uploadSection = document.getElementById('upload-section');
+                if (uploadSection) uploadSection.style.display = 'block';
             });
         
         // Manejar selección de stickers
@@ -376,7 +399,14 @@ class CamagruApp {
         });
         
         // Manejar captura
-        captureBtn.addEventListener('click', () => {
+        captureBtn.addEventListener('click', (e) => {
+            // Doble verificación en el momento del click
+            if (captureBtn.dataset.controlledByAdvancedEditor) {
+                console.log('⛔ app.js: Click ignorado porque el botón es controlado por editor avanzado');
+                return;
+            }
+
+            console.log('Botón de captura clickeado desde app.js');
             if (!selectedSticker) {
                 this.showAlert('error', 'Selecciona un sticker primero');
                 return;

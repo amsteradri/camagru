@@ -55,7 +55,12 @@ class CamagruEditor {
     }
 
     async initWebcam() {
-        if (!this.video) return;
+        if (!this.video) {
+            console.error('Elemento de video no encontrado');
+            return;
+        }
+        
+        console.log('Iniciando webcam en editor.js...');
         
         try {
             this.stream = await navigator.mediaDevices.getUserMedia({ 
@@ -63,11 +68,18 @@ class CamagruEditor {
             });
             
             this.video.srcObject = this.stream;
-            this.video.play();
+            
+            // Manejar promesa de play()
+            try {
+                await this.video.play();
+                console.log('Video reproduciendo correctamente');
+            } catch (playError) {
+                console.error('Error al reproducir video:', playError);
+            }
             
             this.video.addEventListener('loadedmetadata', () => {
                 this.adjustCanvasSize();
-                console.log('Webcam inicializada correctamente');
+                console.log('Webcam inicializada y metadatos cargados');
             });
             
         } catch (error) {
@@ -311,18 +323,31 @@ class CamagruEditor {
     }
 
     initEventListeners() {
-        // Botón de captura
+        // Botón de captura - limpieza agresiva de listeners
         if (this.captureBtn) {
+            console.log('Configurando event listeners del botón de captura');
+            
+            // Remover todos los listeners existentes clonando el botón
+            const newCaptureBtn = this.captureBtn.cloneNode(true);
+            this.captureBtn.parentNode.replaceChild(newCaptureBtn, this.captureBtn);
+            this.captureBtn = newCaptureBtn;
+            
+            // Configurar el botón
             this.captureBtn.type = 'button';
-            this.captureBtn.removeEventListener('click', this.boundCaptureHandler);
+            
+            // Agregar nuevo listener
             this.boundCaptureHandler = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                console.log('Botón de captura clickeado desde editor.js');
                 if (!e.target.disabled) {
                     this.capturePhoto();
                 }
             };
             this.captureBtn.addEventListener('click', this.boundCaptureHandler);
+            
+            // Marcar que este botón está controlado por el editor avanzado
+            this.captureBtn.dataset.controlledByAdvancedEditor = 'true';
         }
 
         // Botón de procesar imagen subida
