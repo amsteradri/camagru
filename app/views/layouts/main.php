@@ -110,10 +110,10 @@
             <div class="row">
                 <div class="col-md-6">
                     <h5><i class="bi bi-camera-fill me-2"></i>Camagru</h5>
-                    <p class="text-muted mb-0">Una mini aplicación de Instagram para compartir fotos editadas.</p>
+                    <p class="text-white-50 mb-0">Una mini aplicación de Instagram para compartir fotos editadas.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <p class="text-muted mb-0">
+                    <p class="text-white-50 mb-0">
                         &copy; <?= date('Y') ?> Camagru. Hecho con <i class="bi bi-heart-fill text-danger"></i> en 42.
                     </p>
                 </div>

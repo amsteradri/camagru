@@ -430,81 +430,6 @@ STICKERS_PATH=public/stickers/
 4. Generar contraseña para "Correo"
 5. Usar la contraseña de 16 caracteres en `SMTP_PASSWORD`
 
-## 🚀 Despliegue en Producción
-
-### Preparación
-```bash
-# Cambiar a modo producción
-sed -i 's/DEV_MODE=true/DEV_MODE=false/' .env
-
-# Generar clave secreta fuerte
-openssl rand -base64 32
-
-# Actualizar configuración
-nano .env
-```
-
-### Nginx Reverse Proxy (Opcional)
-```nginx
-server {
-    listen 80;
-    server_name tu-dominio.com;
-    
-    location / {
-        proxy_pass http://localhost:8080;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }
-}
-```
-
-### SSL con Let's Encrypt
-```bash
-# Instalar certbot
-sudo apt install certbot
-
-# Obtener certificado
-sudo certbot --nginx -d tu-dominio.com
-
-# Renovación automática
-sudo crontab -e
-0 12 * * * /usr/bin/certbot renew --quiet
-```
-
-## 🐛 Solución de Problemas
-
-### Error: "Cannot access webcam"
-```javascript
-// Verificar permisos en navegador
-// Asegurar HTTPS en producción
-// Comprobar compatibilidad WebRTC
-```
-
-### Error: "Email not sending"
-```php
-// Verificar configuración SMTP
-php scripts/test_email.php
-
-// Comprobar logs
-docker-compose logs web | grep -i smtp
-```
-
-### Error: "Images not uploading"
-```bash
-# Verificar permisos de directorio
-sudo chmod -R 755 public/uploads/
-sudo chown -R www-data:www-data public/uploads/
-```
-
-### Error: "Database connection failed"
-```bash
-# Verificar que MySQL esté corriendo
-docker-compose ps
-
-# Comprobar logs de BD
-docker-compose logs db
-```
-
 ## 📊 Métricas de Rendimiento
 
 - **Tiempo de carga**: < 2 segundos
@@ -514,27 +439,6 @@ docker-compose logs db
 - **SEO Score**: 90/100
 - **Accesibilidad**: WCAG 2.1 AA
 
-## 🤝 Contribuir
-
-### Flujo de Desarrollo
-```bash
-# Fork del repositorio
-git clone https://github.com/tu-usuario/camagru.git
-
-# Crear rama feature
-git checkout -b feature/nueva-funcionalidad
-
-# Desarrollar y testear
-docker-compose up -d
-# ... hacer cambios ...
-
-# Commit y push
-git add .
-git commit -m "feat: añadir nueva funcionalidad"
-git push origin feature/nueva-funcionalidad
-
-# Crear Pull Request
-```
 
 ### Estándares de Código
 - **PHP**: PSR-12 coding standards
@@ -542,29 +446,6 @@ git push origin feature/nueva-funcionalidad
 - **CSS**: BEM methodology
 - **HTML**: Semantic HTML5
 
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT. Ver [LICENSE](LICENSE) para más detalles.
-
-## 👨‍💻 Autor
-
-**Tu Nombre**
-- GitHub: [@tu-usuario](https://github.com/tu-usuario)
-- Email: tu-email@ejemplo.com
-- LinkedIn: [Tu Perfil](https://linkedin.com/in/tu-perfil)
-
-## 🙏 Agradecimientos
-
-- [42 School](https://42.fr/) por el proyecto base
-- [Bootstrap](https://getbootstrap.com/) por el framework CSS
-- [PHP](https://php.net/) por el lenguaje backend
-- [Docker](https://docker.com/) por la containerización
-
----
-
-<div align="center">
-
-**⭐ ¡Dale una estrella si te gustó el proyecto! ⭐**
 
 *Desarrollado con ❤️ y mucho ☕*
 
