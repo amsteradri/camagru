@@ -99,12 +99,12 @@ class User extends Model {
         }
 
         $token = bin2hex(random_bytes(32));
-        $expires = date('Y-m-d H:i:s', strtotime('+1 hour'));
-
-        $sql = "UPDATE users SET reset_token = ?, reset_token_expires = ? WHERE email = ?";
+        
+        // Usar la hora de la base de datos para evitar discrepancias de zona horaria entre PHP y MySQL
+        $sql = "UPDATE users SET reset_token = ?, reset_token_expires = DATE_ADD(NOW(), INTERVAL 1 HOUR) WHERE email = ?";
         $stmt = $this->db->prepare($sql);
         
-        if ($stmt->execute([$token, $expires, $email])) {
+        if ($stmt->execute([$token, $email])) {
             if (Config::isEmailEnabled()) {
                 $this->sendPasswordResetEmail($email, $user['username'], $token);
             }
@@ -115,11 +115,24 @@ class User extends Model {
     }
 
     public function resetPassword($token, $newPassword) {
+        // Debug: Verificar qué está llegando
+        error_log("Intento de reset password con token: " . $token);
+        
         $sql = "SELECT * FROM users WHERE reset_token = ? AND reset_token_expires > NOW()";
         $user = $this->db->fetch($sql, [$token]);
 
         if (!$user) {
-            return ['success' => false, 'message' => 'Token inválido o expirado'];
+            // Debug: Verificar por qué falló
+            $checkSql = "SELECT id, reset_token, reset_token_expires, NOW() as db_now FROM users WHERE reset_token = ?";
+            $checkUser = $this->db->fetch($checkSql, [$token]);
+            
+            if ($checkUser) {
+                error_log("Token encontrado pero expirado. Expira: " . $checkUser['reset_token_expires'] . ", Ahora DB: " . $checkUser['db_now']);
+                return ['success' => false, 'message' => 'El enlace ha expirado. Por favor solicita uno nuevo.'];
+            } else {
+                error_log("Token no encontrado en la base de datos.");
+                return ['success' => false, 'message' => 'Enlace inválido.'];
+            }
         }
 
         if (!$this->isValidPassword($newPassword)) {

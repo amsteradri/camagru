@@ -716,10 +716,14 @@ class CamagruEditor {
         if (!gallery) return;
         
         const images = gallery.querySelectorAll('.user-image-card');
-        const countElement = document.querySelector('.card-title small');
-        
-        if (countElement) {
-            countElement.textContent = `(${images.length})`;
+        // Buscar el contador específicamente dentro de la tarjeta de la galería
+        const cardBody = gallery.closest('.card-body');
+        if (cardBody) {
+            const countElement = cardBody.querySelector('.card-title small');
+            if (countElement) {
+                countElement.textContent = `(${images.length})`;
+                console.log('Contador de galería actualizado:', images.length);
+            }
         }
     }
 
@@ -738,14 +742,16 @@ class CamagruEditor {
             button.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i>';
             button.disabled = true;
             
+            // Usar URLSearchParams para enviar como form-data que PHP pueda leer en $_POST
+            const params = new URLSearchParams();
+            params.append('csrf_token', this.csrfToken);
+
             const response = await fetch(`/editor/deleteImage/${imageId}`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: JSON.stringify({
-                    csrf_token: this.csrfToken
-                })
+                body: params
             });
             
             const result = await response.json();
