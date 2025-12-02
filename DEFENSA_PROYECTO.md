@@ -19,31 +19,68 @@ No se trata solo de hacer una web bonita. El reto era **hacerlo todo "a mano"**.
 
 ## 2. La Estructura: MVC (El esqueleto)
 
-Imagina que tu aplicación es un **Restaurante**. He usado el patrón **MVC (Modelo-Vista-Controlador)** para organizarlo.
+Imagina que tu aplicación es un **Restaurante de Lujo**. He usado el patrón **MVC (Modelo-Vista-Controlador)** para que cada parte del código tenga una única responsabilidad. Así, si quiero cambiar el menú, no tengo que reformar la cocina entera.
 
-### 🧠 Explicación con analogía:
+### 🧠 Desglose Detallado (Analogía vs Realidad):
 
-1.  **El Cliente (El Navegador/Usuario):**
-    *   Llega y pide: *"Quiero ver la galería"* (Escribe la URL `/gallery`).
+#### 1. El Cliente (El Navegador/Usuario)
+*   **Analogía:** Es la persona hambrienta que entra y se sienta.
+*   **Acción:** Escribe `http://localhost/gallery` en su navegador.
+*   **Lo que no ve:** No sabe si hay PHP, Python o magia detrás. Solo quiere su "plato" (la página web).
 
-2.  **El Router (El Recepcionista - `app/core/Router.php`):**
-    *   Es el primero que recibe al cliente.
-    *   Mira la URL y dice: *"Ah, quieres la galería. ¡Avisaré al camarero encargado de la galería!"*.
-    *   **Técnicamente:** Analiza la URL `url.com/controlador/metodo` y decide qué código ejecutar.
+#### 2. El Router (El Recepcionista - `app/core/Router.php`)
+*   **Analogía:** Está en la puerta. Recibe a TODOS los clientes. No cocina, no sirve mesas, solo organiza.
+*   **Su trabajo:**
+    1.  Mira la URL: `/gallery/index`.
+    2.  Dice: *"Ajá, buscas al `GalleryController` y quieres ejecutar la acción `index`"*.
+    3.  Si pides algo que no existe (`/patata`), te manda al `ErrorController` (la mesa de quejas).
+*   **Código Real:** Usa `explode('/', $url)` para separar la dirección y `call_user_func_array` para despertar al controlador adecuado.
 
-3.  **El Controlador (El Camarero - `app/controllers/`):**
-    *   Es el jefe de la operación. Recibe la orden del Router.
-    *   Dice: *"Vale, el cliente quiere ver fotos. Voy a pedirlas a la cocina (Modelo) y luego las pondré bonitas en el plato (Vista)"*.
-    *   **Técnicamente:** Es el intermediario. Pide datos y carga la página.
+#### 3. El Controlador (El Camarero Jefe - `app/controllers/`)
+*   **Analogía:** Es el que coordina todo. Toma la nota del Recepcionista y se pone a trabajar.
+*   **Su trabajo:**
+    1.  Recibe el encargo: "Mostrar la galería".
+    2.  Piensa: *"Para esto necesito fotos"*. -> **Llama al Modelo**.
+    3.  Recibe las fotos de la cocina.
+    4.  Piensa: *"Ahora necesito ponerlas bonitas"*. -> **Llama a la Vista**.
+*   **Técnicamente:** Es una clase PHP (ej: `GalleryController`) que extiende de la clase base `Controller`.
 
-4.  **El Modelo (La Cocina/Almacén - `app/models/`):**
-    *   Aquí están los ingredientes (Datos). El cocinero sabe dónde está todo en la despensa (Base de Datos).
-    *   El Controlador le dice: *"Dame las últimas 5 fotos"*. El Modelo hace la consulta SQL (`SELECT * FROM images...`) y se las devuelve.
-    *   **Técnicamente:** Gestiona la lógica de datos y habla con MySQL.
+#### 4. El Modelo (La Cocina y Despensa - `app/models/`)
+*   **Analogía:** Aquí están los cocineros y los ingredientes. Es el único lugar donde se tocan los alimentos crudos (Datos).
+*   **Su trabajo:**
+    1.  El Camarero (Controlador) grita: *"¡Marchando 5 fotos recientes!"*.
+    2.  El Cocinero (Modelo `Image`) abre la nevera (Base de Datos MySQL).
+    3.  Ejecuta la consulta SQL: `SELECT * FROM images ORDER BY date DESC LIMIT 5`.
+    4.  Devuelve los datos "crudos" (un array de información) al Camarero.
+*   **Regla de Oro:** El Modelo NUNCA habla con la Vista. La cocina no sale al comedor.
 
-5.  **La Vista (El Plato Presentado - `app/views/`):**
-    *   Es lo que llega a la mesa. El Controlador coge los datos crudos del Modelo y los pone en una plantilla HTML bonita para que el usuario los vea.
-    *   **Técnicamente:** Archivos HTML/PHP que muestran la interfaz.
+#### 5. La Vista (El Emplatado - `app/views/`)
+*   **Analogía:** Es la presentación final del plato.
+*   **Su trabajo:**
+    1.  Recibe los datos del Camarero.
+    2.  Los mezcla con HTML y CSS.
+    3.  No piensa, solo muestra. No hace cálculos ni consultas a la base de datos. Solo hace bucles (`foreach`) para mostrar las fotos que le han dado.
+*   **Resultado:** El HTML final que ve el usuario en su navegador.
+
+---
+
+### 🔄 Ejemplo de Flujo: ¿Qué pasa cuando das "Login"?
+
+Para que entiendas el viaje completo de un dato:
+
+1.  **Usuario:** Rellena el formulario y pulsa "Entrar".
+2.  **Router:** Ve que la URL es `/auth/login` (método POST). Llama a `AuthController`.
+3.  **Controlador (`AuthController`):**
+    *   Recibe los datos (`$_POST`).
+    *   Llama al Modelo `User` -> `User::login($email, $password)`.
+4.  **Modelo (`User`):**
+    *   Busca en la BD: `SELECT * FROM users WHERE email = ...`.
+    *   Comprueba la contraseña: `password_verify()`.
+    *   Devuelve `true` o `false` al Controlador.
+5.  **Controlador:**
+    *   Si es `true`: Guarda la sesión (`$_SESSION['user']`) y redirige al `Home`.
+    *   Si es `false`: Carga la **Vista** de Login otra vez, pero pasándole un mensaje de error ("Contraseña incorrecta").
+6.  **Vista:** Muestra el formulario de nuevo con una alerta roja.
 
 ---
 
@@ -63,6 +100,26 @@ Imagina que tu aplicación es un **Restaurante**. He usado el patrón **MVC (Mod
 ### 🐳 Docker (El contenedor)
 *   Imagina que mi proyecto es una casa amueblada. Docker me permite meter la casa entera en una caja mágica.
 *   Tú te descargas la caja, la abres (`docker-compose up`) y la casa aparece montada exactamente igual que en mi ordenador. No tienes que instalar PHP ni MySQL por tu cuenta.
+
+#### 📄 El archivo `docker-compose.yml` (El plano de obra)
+Este archivo es el **Jefe de Obra**. Le dice a Docker qué "trabajadores" (servicios) necesita contratar y cómo deben comportarse.
+
+1.  **`services:` (Los trabajadores)**
+    *   **`web`:** Es tu servidor Apache+PHP (tu aplicación).
+        *   `build: .`: Le dice "constrúyete usando las instrucciones del Dockerfile".
+        *   `ports: "8080:80"`: Es un **túnel**. Si entras por el puerto 8080 de tu PC (`localhost:8080`), apareces mágicamente en el puerto 80 del contenedor.
+        *   `volumes: .:/var/www/html`: Es un **espejo**. Lo que editas en tu carpeta de Windows se cambia al instante dentro del contenedor. Sin esto, tendrías que reiniciar el servidor con cada cambio de código.
+        *   `depends_on: - db`: Le dice "Espera a que la base de datos esté lista antes de arrancar".
+    *   **`db`:** Es la base de datos MySQL.
+        *   `image: mysql:8.0`: Aquí no construimos nada, descargamos una imagen oficial de MySQL lista para usar.
+        *   `environment`: Aquí le pasamos la contraseña (`rootpassword`) para que se configure sola al arrancar.
+        *   `volumes`: Importante. Guarda los datos en un "disco virtual" (`db_data`) para que no se borren los usuarios si apagas el contenedor.
+    *   **`phpmyadmin`:** Es una interfaz visual para ver la base de datos.
+        *   Se conecta al servicio `db` usando las claves que le damos.
+
+2.  **`networks:` (El WiFi privado)**
+    *   Crea una red interna llamada `camagru_network`.
+    *   Gracias a esto, el contenedor `web` puede conectarse a la base de datos usando el nombre `db` como si fuera una dirección web, sin necesidad de saber direcciones IP complicadas.
 
 ---
 
@@ -135,3 +192,33 @@ Si te preguntan si tuviste problemas, cuenta esto para parecer un experto que sa
 1.  Es una arquitectura MVC hecha a mano, sin magia de frameworks.
 2.  Es segura, protegiendo datos y usuarios contra ataques comunes.
 3.  Es funcional, combinando tecnologías de frontend (Webcam/Canvas) y backend (PHP GD) para crear algo divertido.
+
+---
+
+## 9. Mapa del Tesoro (Estructura de Carpetas)
+
+Si te piden abrir un archivo, no entres en pánico. Aquí está qué es cada cosa:
+
+*   `app/`: Todo el código PHP (Lógica).
+    *   `config/`: Configuración de la base de datos.
+    *   `controllers/`: Los "Camareros" (Admin, Auth, Gallery...).
+    *   `core/`: El cerebro del framework (Router, Database, Model). **Aquí está la magia del MVC.**
+    *   `models/`: Las clases que hablan con la BD (User, Image...).
+    *   `views/`: Los archivos HTML/PHP (lo que se ve).
+*   `public/`: Lo único que ve el navegador.
+    *   `index.php`: La puerta de entrada.
+    *   `assets/`: CSS, JS y las imágenes subidas (`uploads/`).
+*   `docker/`: Configuración de los contenedores.
+
+---
+
+## 10. Accesos Rápidos (Chuleta de URLs y Claves)
+
+Si te piden entrar a la base de datos para demostrar que los usuarios se guardan de verdad:
+
+*   **Tu Web:** [http://localhost:8080](http://localhost:8080)
+*   **phpMyAdmin (Gestor de BD):** [http://localhost:8081](http://localhost:8081)
+    *   **Usuario:** `root`
+    *   **Contraseña:** `rootpassword`
+    *   (O también: Usuario `camagru_user` / Contraseña `camagru_pass`)
+
