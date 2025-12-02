@@ -1,116 +1,137 @@
-# 🎓 Guía de Defensa: Proyecto Camagru
+# 🎓 Guía Definitiva de Defensa: Proyecto Camagru (Versión "For Dummies")
 
-Este documento sirve como guía técnica y funcional para explicar el desarrollo del proyecto Camagru. Aquí se detallan la arquitectura, las decisiones de diseño y el funcionamiento interno de las características clave.
-
----
-
-## 1. Introducción y Objetivo
-**¿Qué es Camagru?**
-Es una aplicación web completa estilo "red social" (similar a un mini-Instagram) que permite a los usuarios registrarse, capturar fotos con su webcam, editarlas superponiendo stickers (imágenes PNG con transparencia) y compartirlas en una galería pública donde otros usuarios pueden dar "likes" y comentar.
-
-**Objetivo Técnico:**
-El objetivo principal fue construir una aplicación web desde cero **sin utilizar frameworks de Backend** (como Laravel o Symfony) y **sin frameworks de Frontend pesados** (como React o Angular), utilizando PHP nativo y JavaScript puro (Vanilla JS). Esto demuestra un dominio profundo de los fundamentos de la programación web.
+Este documento es tu "chuleta" maestra. Está escrito en lenguaje sencillo para que entiendas cada pieza del puzzle y puedas explicarlo con confianza, incluso si te pones nervioso.
 
 ---
 
-## 2. Arquitectura del Sistema: MVC (Modelo-Vista-Controlador)
+## 1. ¿Qué es esto y por qué lo he hecho?
 
-He implementado una arquitectura **MVC personalizada** para organizar el código de manera limpia y escalable.
+**La frase clave:**
+> "Camagru es una red social de fotografía, similar a un Instagram básico, donde puedes hacerte fotos con la webcam, ponerles stickers divertidos y compartirlas."
 
-### 🧠 ¿Cómo funciona mi MVC?
-
-1.  **Entry Point (`public/index.php`):**
-    *   Todo el tráfico pasa por aquí. Es el único archivo accesible directamente desde el navegador.
-    *   Inicia la sesión, carga el entorno (`.env`) y llama al `Router`.
-
-2.  **Router (`app/core/Router.php`):**
-    *   Analiza la URL (ej: `/gallery/index`).
-    *   Separa el **Controlador** (`GalleryController`) y el **Método** (`index`).
-    *   Instancia el controlador y ejecuta la acción.
-
-3.  **Controladores (`app/controllers/`):**
-    *   Son el "cerebro". Reciben la petición del usuario, piden datos al Modelo y cargan una Vista.
-    *   *Ejemplo:* El `EditorController` verifica si el usuario está logueado, recibe la imagen en Base64 y llama al modelo para guardarla.
-
-4.  **Modelos (`app/models/`):**
-    *   Gestionan la lógica de datos y la comunicación con la Base de Datos.
-    *   Heredan de una clase base `Model` que maneja la conexión PDO.
-    *   *Ejemplo:* `User.php` tiene métodos como `login()`, `register()`, `findByEmail()`.
-
-5.  **Vistas (`app/views/`):**
-    *   Es lo que ve el usuario (HTML + PHP para mostrar variables).
-    *   Usan un sistema de "Layouts" (`layouts/main.php`) para no repetir el header y footer en cada página.
+**El objetivo oculto (lo que el profesor quiere oír):**
+No se trata solo de hacer una web bonita. El reto era **hacerlo todo "a mano"**.
+*   ❌ Sin frameworks que te lo dan todo hecho (como Laravel, React, Symfony).
+*   ✅ Usando solo PHP puro, JavaScript nativo y SQL.
+*   **¿Por qué?** Para demostrar que entiendo cómo funciona la web por debajo: cómo viajan los datos, cómo se protege la información y cómo se estructura una aplicación real.
 
 ---
 
-## 3. Tecnologías y Decisiones Técnicas
+## 2. La Estructura: MVC (El esqueleto)
 
-### 🐘 Backend (PHP)
-*   **PDO (PHP Data Objects):** Utilizado para conectar a MySQL. Es vital porque permite usar *Prepared Statements*, lo que protege contra inyecciones SQL.
-*   **GD Library:** Librería nativa de PHP usada para el procesamiento de imágenes (fusionar la foto del usuario con el sticker).
-*   **Session Management:** Uso de `$_SESSION` nativo para mantener al usuario logueado.
+Imagina que tu aplicación es un **Restaurante**. He usado el patrón **MVC (Modelo-Vista-Controlador)** para organizarlo.
 
-### 🌐 Frontend (HTML/CSS/JS)
-*   **Bootstrap 5:** Framework CSS utilizado para el sistema de rejilla (Grid) y componentes responsivos (que se vea bien en móvil y PC).
-*   **Vanilla JavaScript:**
-    *   **WebRTC (`navigator.mediaDevices.getUserMedia`):** API del navegador para acceder a la webcam sin plugins.
-    *   **Canvas API:** Usada para dibujar el video en tiempo real y capturar el frame como una imagen.
-    *   **Fetch API (AJAX):** Usada para dar likes, borrar fotos y enviar comentarios sin recargar la página, mejorando la experiencia de usuario (UX).
+### 🧠 Explicación con analogía:
 
-### 🐳 Infraestructura
-*   **Docker & Docker Compose:**
-    *   El proyecto está contenerizado. Tengo un contenedor para el servidor web (Apache+PHP) y otro para la base de datos (MySQL).
-    *   Esto garantiza que el proyecto funcione igual en cualquier ordenador ("It works on my machine").
+1.  **El Cliente (El Navegador/Usuario):**
+    *   Llega y pide: *"Quiero ver la galería"* (Escribe la URL `/gallery`).
 
----
+2.  **El Router (El Recepcionista - `app/core/Router.php`):**
+    *   Es el primero que recibe al cliente.
+    *   Mira la URL y dice: *"Ah, quieres la galería. ¡Avisaré al camarero encargado de la galería!"*.
+    *   **Técnicamente:** Analiza la URL `url.com/controlador/metodo` y decide qué código ejecutar.
 
-## 4. Explicación de Funcionalidades Clave (Lo difícil)
+3.  **El Controlador (El Camarero - `app/controllers/`):**
+    *   Es el jefe de la operación. Recibe la orden del Router.
+    *   Dice: *"Vale, el cliente quiere ver fotos. Voy a pedirlas a la cocina (Modelo) y luego las pondré bonitas en el plato (Vista)"*.
+    *   **Técnicamente:** Es el intermediario. Pide datos y carga la página.
 
-### 📸 A. El Editor y la Superposición (El Core)
-Esta es la parte más compleja. Funciona en dos pasos:
+4.  **El Modelo (La Cocina/Almacén - `app/models/`):**
+    *   Aquí están los ingredientes (Datos). El cocinero sabe dónde está todo en la despensa (Base de Datos).
+    *   El Controlador le dice: *"Dame las últimas 5 fotos"*. El Modelo hace la consulta SQL (`SELECT * FROM images...`) y se las devuelve.
+    *   **Técnicamente:** Gestiona la lógica de datos y habla con MySQL.
 
-1.  **Cliente (JS):**
-    *   Capturo el stream de video en un `<video>`.
-    *   Cuando el usuario hace clic, dibujo ese frame en un `<canvas>` oculto.
-    *   Convierto ese canvas a una cadena Base64 (`data:image/png;base64...`) y la envío al servidor junto con las coordenadas de los stickers.
-
-2.  **Servidor (PHP - `Image.php`):**
-    *   Recibo el Base64 y lo decodifico a una imagen real.
-    *   Uso `imagecreatefrompng` para cargar los stickers.
-    *   Uso `imagecopyresampled` para pegar el sticker sobre la foto original, respetando el canal Alpha (transparencia).
-    *   Guardo el resultado final en la carpeta `uploads/`.
-
-### 🔐 B. Seguridad (Puntos Críticos)
-Si te preguntan sobre seguridad, menciona estos 4 pilares:
-
-1.  **SQL Injection:** Prevenida usando sentencias preparadas (`$stmt->prepare("SELECT * FROM users WHERE id = ?")`). Nunca concateno variables directamente en el SQL.
-2.  **XSS (Cross-Site Scripting):** Todo lo que imprime el usuario (como comentarios) se pasa por `htmlspecialchars()` antes de mostrarse en pantalla. Esto convierte `<script>` en texto inofensivo.
-3.  **CSRF (Cross-Site Request Forgery):** Cada formulario genera un token único oculto (`csrf_token`). Al enviar el formulario, verifico que el token coincida con el de la sesión. Esto evita que otros sitios envíen formularios en nombre del usuario.
-4.  **Contraseñas:** Nunca se guardan en texto plano. Uso `password_hash()` (algoritmo Bcrypt) para guardarlas y `password_verify()` para comprobarlas.
-
-### 📧 C. Sistema de Email
-*   Uso un servidor SMTP (configurado en `.env`) para enviar correos reales.
-*   **Verificación:** Al registrarse, genero un token aleatorio (`bin2hex(random_bytes(32))`), lo guardo en la BD y envío un link. El usuario no puede loguearse hasta hacer clic en ese link.
+5.  **La Vista (El Plato Presentado - `app/views/`):**
+    *   Es lo que llega a la mesa. El Controlador coge los datos crudos del Modelo y los pone en una plantilla HTML bonita para que el usuario los vea.
+    *   **Técnicamente:** Archivos HTML/PHP que muestran la interfaz.
 
 ---
 
-## 5. Base de Datos (Esquema)
+## 3. Las "Tripas" del Proyecto (Tecnologías)
 
-Tengo 4 tablas principales relacionadas entre sí:
+### 🐘 Backend (El motor - PHP)
+*   **¿Por qué PHP?** Es el lenguaje del servidor. Procesa los formularios, guarda las fotos y decide qué mostrar.
+*   **PDO:** Es la herramienta que uso para hablar con la base de datos de forma segura. Es como usar un traductor certificado en lugar de gritarle a la base de datos.
+*   **GD Library:** Es la "herramienta de Photoshop" de PHP. La uso para pegar el sticker encima de tu foto.
 
-1.  **Users:** `id`, `username`, `email`, `password`, `token`.
-2.  **Images:** `id`, `user_id` (FK), `filename`.
-3.  **Likes:** `user_id` (FK), `image_id` (FK). *Nota: Tiene una clave única compuesta (user_id, image_id) para que un usuario no pueda dar like dos veces a la misma foto.*
-4.  **Comments:** `id`, `user_id`, `image_id`, `text`.
+### 🌐 Frontend (La cara - HTML/JS/CSS)
+*   **Vanilla JS (JavaScript puro):** No usé librerías pesadas.
+    *   **AJAX (Fetch):** Permite dar "Like" sin que la página se recargue. Es como levantar la mano para pedir algo sin tener que salir y volver a entrar al restaurante.
+    *   **Webcam:** Uso código nativo del navegador para encender la cámara.
+*   **Bootstrap 5:** Para que la web sea bonita y se adapte al móvil sin tener que escribir mil líneas de CSS.
+
+### 🐳 Docker (El contenedor)
+*   Imagina que mi proyecto es una casa amueblada. Docker me permite meter la casa entera en una caja mágica.
+*   Tú te descargas la caja, la abres (`docker-compose up`) y la casa aparece montada exactamente igual que en mi ordenador. No tienes que instalar PHP ni MySQL por tu cuenta.
 
 ---
 
-## 6. Problemas Resueltos (Anécdotas para la defensa)
+## 4. La Magia: ¿Cómo funciona el Editor de Fotos?
 
-*   **El problema de la doble foto:** "Tuve un desafío interesante donde se generaban dos fotos al capturar. Descubrí que tenía dos archivos JS (`app.js` y `editor.js`) escuchando el mismo evento de clic. Lo solucioné implementando una detección en `app.js` para que se desactive si detecta que el editor avanzado está presente, y añadiendo 'flags' para evitar ejecuciones múltiples."
-*   **Zonas Horarias:** "Al principio los tokens de recuperación expiraban inmediatamente. Aprendí que PHP y MySQL tenían zonas horarias diferentes. Lo arreglé haciendo que MySQL se encargue de calcular la expiración (`NOW() + INTERVAL 1 HOUR`) para mantener la consistencia."
+Esta es la parte más difícil. Si te preguntan "¿Cómo se guardan las fotos?", responde esto:
+
+**Paso 1: En el navegador (Tu ordenador)**
+1.  El navegador pide permiso para usar la cámara (`getUserMedia`).
+2.  El video se muestra en una etiqueta `<video>`.
+3.  Cuando pulsas "Capturar", copio lo que se ve en el video a un `<canvas>` (un lienzo digital invisible).
+4.  Ese lienzo se convierte en un texto larguísimo (Base64) que representa la imagen.
+5.  Envío ese texto y la posición de los stickers al servidor.
+
+**Paso 2: En el servidor (PHP)**
+1.  Recibo el texto Base64 y lo convierto de nuevo en un archivo de imagen.
+2.  Cargo la imagen del sticker (que es un PNG transparente).
+3.  Uso matemáticas para calcular dónde pegarlo (coordenadas X e Y).
+4.  **Fusión:** Pego el sticker sobre la foto original.
+5.  Guardo el resultado final en la carpeta `uploads/` y registro la foto en la base de datos.
 
 ---
 
-## 7. Conclusión
-Este proyecto me ha permitido entender cómo funcionan los frameworks modernos "por debajo del capó", gestionando manualmente el enrutamiento, la seguridad y la manipulación de archivos multimedia.
+## 5. Seguridad: Los 4 Jinetes del Apocalipsis (y cómo los vencí)
+
+Si te preguntan "¿Es segura tu web?", di que te has protegido contra los 4 ataques más comunes:
+
+1.  **Inyección SQL (El ataque del espía):**
+    *   *El ataque:* Alguien escribe código en el login para engañar a la base de datos.
+    *   *Mi defensa:* Uso **Sentencias Preparadas (PDO)**. Separo los datos del código. Es como si alguien intenta colar una orden en una carta, pero yo leo la carta como texto, no como órdenes.
+
+2.  **XSS (El ataque del grafitero):**
+    *   *El ataque:* Alguien pone un comentario con código JavaScript malicioso (`<script>alert('Hacked')</script>`).
+    *   *Mi defensa:* Uso `htmlspecialchars()`. Convierte esos símbolos en texto inofensivo. El navegador lo muestra, pero no lo ejecuta.
+
+3.  **CSRF (El ataque del impostor):**
+    *   *El ataque:* Una web maliciosa intenta enviar un formulario en tu nombre sin que lo sepas.
+    *   *Mi defensa:* **Tokens CSRF**. Cada vez que te doy un formulario, te doy un código secreto único. Si me envías el formulario sin ese código, sé que no fuiste tú (o que no lo hiciste desde mi web).
+
+4.  **Contraseñas (El candado):**
+    *   *El problema:* Guardar contraseñas tal cual ("123456") es peligroso.
+    *   *Mi defensa:* Las guardo "hasheadas" (`password_hash`). Las convierto en un garabato ininteligible. Ni yo mismo puedo saber cuál es tu contraseña real, solo puedo comprobar si la que escribes coincide con el garabato.
+
+---
+
+## 6. Base de Datos: ¿Dónde guardo las cosas?
+
+Tengo 4 cajones (tablas):
+
+1.  **Users:** Datos de la gente (nombre, email, contraseña encriptada).
+2.  **Images:** Las fotos (quién la subió y cómo se llama el archivo).
+3.  **Likes:** Quién dio like a qué foto. (Tiene un truco: una "clave única" para que no puedas dar like 50 veces a la misma foto).
+4.  **Comments:** Qué dijeron, quién lo dijo y en qué foto.
+
+---
+
+## 7. Anécdotas para brillar (Storytelling)
+
+Si te preguntan si tuviste problemas, cuenta esto para parecer un experto que sabe resolver crisis:
+
+*   **"El misterio de la doble foto":**
+    *   *"Al principio, cuando hacía una foto, se guardaban dos veces. Me volví loco buscando el error. Resulta que tenía dos archivos JavaScript distintos escuchando el clic del mismo botón. Aprendí a depurar el código y a controlar mejor los eventos del navegador."*
+
+*   **"El token que caducaba al instante":**
+    *   *"El enlace de 'recuperar contraseña' me decía siempre que había expirado. Descubrí que PHP (mi código) y MySQL (la base de datos) tenían horas diferentes (zonas horarias). Lo arreglé haciendo que la base de datos se encargue de todos los cálculos de tiempo para que sea consistente."*
+
+---
+
+## 8. Resumen en 3 frases
+1.  Es una arquitectura MVC hecha a mano, sin magia de frameworks.
+2.  Es segura, protegiendo datos y usuarios contra ataques comunes.
+3.  Es funcional, combinando tecnologías de frontend (Webcam/Canvas) y backend (PHP GD) para crear algo divertido.
